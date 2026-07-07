@@ -53,7 +53,7 @@ button:disabled{opacity:.5;cursor:default;}
 </div>
 
 <script>
-const WEBHOOK_URL = "https://moses1919.app.n8n.cloud/webhook/7a7963fe-ec97-4162-8d35-9d3ae21b5dfb";
+const WEBHOOK_URL = "https://moses1920.app.n8n.cloud/webhook/7a7963fe-ec97-4162-8d35-9d3ae21b5dfb";
 
 const btn = document.getElementById('askBtn');
 const errorEl = document.getElementById('error');
@@ -75,8 +75,8 @@ btn.addEventListener('click', async () => {
   try {
     const res = await fetch(WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
-      body: JSON.stringify({ question: query })
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ password: apiKey, question: query })
     });
     if (!res.ok) throw new Error('Erreur ' + res.status + ' — vérifie le mot de passe.');
     const data = await res.json();
