@@ -17,12 +17,15 @@ h1 em{color:var(--gold);font-style:normal;}
 label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 input{width:100%;padding:12px 14px;background:var(--d2);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--w);font-family:'Montserrat',sans-serif;font-size:14px;outline:none;}
 input:focus{border-color:var(--gold);}
-.row{display:flex;gap:10px;margin-bottom:20px;}
+.row{display:flex;gap:10px;margin-bottom:12px;}
 .row input{flex:1;}
 button{padding:12px 22px;background:var(--gold);color:#080808;border:none;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap;}
 button:hover{background:var(--gl);}
 button:disabled{opacity:.5;cursor:default;}
 .hint{font-size:11px;opacity:.4;margin-top:8px;}
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+.chip{background:var(--d3);border:1px solid rgba(201,168,76,.25);color:var(--gl);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;padding:8px 14px;border-radius:20px;cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap;}
+.chip:hover{background:var(--gd);border-color:var(--gold);}
 .error{color:#e57373;font-size:13px;margin-bottom:16px;}
 .result{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
 .result.top{border-color:var(--gold);background:var(--gd);}
@@ -47,6 +50,14 @@ button:disabled{opacity:.5;cursor:default;}
     <button id="askBtn">✨ Test</button>
   </div>
 
+  <div class="suggestions" id="suggestions">
+    <div class="chip" data-q="What is GOVERN?">What is GOVERN?</div>
+    <div class="chip" data-q="What are the six functions of CSF 2.0?">Six Functions</div>
+    <div class="chip" data-q="What are the CSF 2.0 Implementation Tiers?">Implementation Tiers</div>
+    <div class="chip" data-q="What is a Community Profile?">Community Profiles</div>
+    <div class="chip" data-q="What is a Profile in CSF 2.0?">Profiles</div>
+  </div>
+
   <div id="error" class="error" style="display:none;"></div>
   <div id="loading" class="loading" style="display:none;">Searching...</div>
   <div id="results"></div>
@@ -59,6 +70,15 @@ const btn = document.getElementById('askBtn');
 const errorEl = document.getElementById('error');
 const loadingEl = document.getElementById('loading');
 const resultsEl = document.getElementById('results');
+const queryInput = document.getElementById('query');
+const suggestionsEl = document.getElementById('suggestions');
+
+suggestionsEl.addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  queryInput.value = chip.getAttribute('data-q');
+  btn.click();
+});
 
 btn.addEventListener('click', async () => {
   const apiKey = document.getElementById('apiKey').value.trim();
