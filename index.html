@@ -27,11 +27,18 @@ button:disabled{opacity:.5;cursor:default;}
 .chip{background:var(--d3);border:1px solid rgba(201,168,76,.25);color:var(--gl);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;padding:8px 14px;border-radius:20px;cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap;}
 .chip:hover{background:var(--gd);border-color:var(--gold);}
 .error{color:#e57373;font-size:13px;margin-bottom:16px;}
-.result{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.result{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .15s;}
+.result:hover{border-color:rgba(201,168,76,.4);}
+.result-head{display:flex;justify-content:space-between;align-items:center;}
 .result.top{border-color:var(--gold);background:var(--gd);}
 .result .section{font-size:13px;font-weight:500;}
 .result.top .section{color:var(--gold);}
 .result .score{font-size:12px;opacity:.5;}
+.result .arrow{font-size:11px;opacity:.4;margin-left:8px;transition:transform .15s;}
+.result.open .arrow{transform:rotate(90deg);}
+.result-body{max-height:0;overflow:hidden;transition:max-height .2s ease;}
+.result.open .result-body{max-height:300px;margin-top:12px;}
+.result-body p{font-size:13px;line-height:1.6;opacity:.75;font-weight:300;}
 .loading{font-size:13px;opacity:.6;}
 </style>
 </head>
@@ -80,9 +87,15 @@ suggestionsEl.addEventListener('click', (e) => {
   btn.click();
 });
 
+resultsEl.addEventListener('click', (e) => {
+  const card = e.target.closest('.result');
+  if (!card) return;
+  card.classList.toggle('open');
+});
+
 btn.addEventListener('click', async () => {
   const apiKey = document.getElementById('apiKey').value.trim();
-  const query = document.getElementById('query').value.trim();
+  const query = queryInput.value.trim();
   errorEl.style.display = 'none';
   resultsEl.innerHTML = '';
 
@@ -106,7 +119,14 @@ btn.addEventListener('click', async () => {
       const pct = Math.round((r.score || 0) * 100);
       const div = document.createElement('div');
       div.className = 'result' + (i === 0 ? ' top' : '');
-      div.innerHTML = `<span class="section">${r.section}</span><span class="score">${pct}%</span>`;
+      const bodyText = r.text ? r.text.replace(/^.*?\?\s*/, '') : 'No content available for this chunk.';
+      div.innerHTML = `
+        <div class="result-head">
+          <span class="section">${r.section}</span>
+          <span><span class="score">${pct}%</span><span class="arrow">▶</span></span>
+        </div>
+        <div class="result-body"><p>${bodyText}</p></div>
+      `;
       resultsEl.appendChild(div);
     });
   } catch (err) {
